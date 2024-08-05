@@ -1,0 +1,12 @@
+spring:
+  data:
+    mongodb:
+      username: ${MONGO_USERNAME}
+      password: ${MONGO_PASSWORD}
+      host: ${MONGO_HOST}
+      port: ${MONGO_PORT}
+      database: ${MONGO_DATABASE}
+      authentication-database: ${MONGO_AUTH_DATABASE}
+
+server:
+  port: 8088
