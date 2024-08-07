@@ -2,8 +2,7 @@ package com.app.onewebsocketapp.chat;
 
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
