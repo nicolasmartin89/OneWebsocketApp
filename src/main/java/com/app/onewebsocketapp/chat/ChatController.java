@@ -13,32 +13,29 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-public class ChatMessageController {
+public class ChatController {
+
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatMessageService chatMessageService;
 
     @MessageMapping("/chat")
-    public void processMessage(
-            @Payload ChatMessage chatMessage
-    ){
+    public void processMessage(@Payload ChatMessage chatMessage) {
         ChatMessage savedMsg = chatMessageService.save(chatMessage);
-        //nico/queue/message
         messagingTemplate.convertAndSendToUser(
                 chatMessage.getRecipientId(), "/queue/messages",
-                ChatNotification.builder()
-                        .id(savedMsg.getId())
-                        .senderID(savedMsg.getSenderId())
-                        .recipientID(savedMsg.getRecipientId())
-                        .content(savedMsg.getContent())
-                        .build()
+                new ChatNotification(
+                        savedMsg.getId(),
+                        savedMsg.getSenderId(),
+                        savedMsg.getRecipientId(),
+                        savedMsg.getContent()
+                )
         );
-
     }
 
     @GetMapping("/messages/{senderId}/{recipientId}")
-    public ResponseEntity<List<ChatMessage>>findChatMessages(
-            @PathVariable("senderId") String senderId,
-            @PathVariable("recipientId") String recipientId){
-        return ResponseEntity.ok(chatMessageService.findChatMessages(senderId, recipientId));
+    public ResponseEntity<List<ChatMessage>> findChatMessages(@PathVariable String senderId,
+                                                              @PathVariable String recipientId) {
+        return ResponseEntity
+                .ok(chatMessageService.findChatMessages(senderId, recipientId));
     }
 }
